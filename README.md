@@ -1,3 +1,166 @@
+# ISO3_Mapping_ILOSTAT
+
+### Mapping ISO3 Codes to ILO Unemployment Data (19th ICLS Definition)
+
+This repository contains a Python-based manual processing pipeline for mapping ISO3 country codes to ILOSTAT’s **“Unemployment rates by reference area – Current ILO definition (19th ICLS)”** dataset.
+
+Since the original ILOSTAT data does not include ISO3 codes, ISO3 identifiers were assigned by referencing the country table exported from Navicat, enabling standardized country-level analysis.
+
+---
+
+## 📌 1. Background
+
+The unemployment data based on the 19th ICLS definition from ILOSTAT only provides country names in the `Area` column and does not include ISO3 country codes.
+To resolve this limitation, ISO3 codes were mapped through the following process:
+
+* Country name normalization
+* Fuzzy string matching
+* Manual override for known exceptions
+* Review and exclusion of unmatched entities
+
+---
+
+## 📁 2. Data Sources
+
+### **① Unemployment Data (id=24.xlsx)**
+
+* Downloaded from ILOSTAT
+* Contains country or region names in the `Area` column
+
+### **② Country Reference Table (country.xlsx)**
+
+* Downloaded from Navicat
+* Includes the following columns:
+
+  * `longName_EN`
+  * `shortName_EN`
+  * `ISO3Code`
+
+---
+
+## ⚙️ 3. Matching Logic
+
+### 🔹 1) Normalization
+
+All country names are normalized using the following rules:
+
+* Convert to lowercase
+* Remove parentheses and their contents
+* Remove special characters
+* Remove the article "the"
+
+This preprocessing step improves the accuracy of fuzzy matching.
+
+---
+
+### 🔹 2) Fuzzy Matching
+
+* The `Area` values are normalized and compared against both `longName_EN` and `shortName_EN`.
+* Matching is performed using `fuzzywuzzy.process.extractOne()`.
+* A match is accepted only if the similarity score is **90 or higher**.
+
+---
+
+### 🔹 3) Manual Override
+
+Some country names require manual intervention. For example:
+
+* “Czechia” is not listed in the country reference table but is equivalent to “The Czech Republic”.
+  → It is therefore forcibly mapped to ISO3 code **CZE**.
+
+---
+
+### 🔹 4) Unmatched Countries
+
+Countries that fail to meet the matching threshold or do not exist in the reference table are logged and excluded from the final dataset.
+
+Examples:
+
+* “Jersey”
+* “Kosovo”
+
+---
+
+## 🧪 4. Python Code
+
+```python
+import pandas as pd
+import re
+from fuzzywuzzy import process
+
+# Function to normalize country names for better matching
+def normalize(text):
+    text = str(text).lower().strip()  # Convert to lowercase and remove leading/trailing spaces
+    text = re.sub(r'\(.*?\)', '', text)  # Remove content inside parentheses
+    text = re.sub(r'[^a-z0-9 ]', '', text)  # Remove special characters
+    text = re.sub(r'\bthe\b', '', text)  # Remove the word 'the'
+    return text.strip()
+
+# Load the ILO unemployment dataset (19th ICLS definition)
+id24 = pd.read_excel("id=24.xlsx")
+
+# Load the country reference table (from Navicat)
+country = pd.read_excel("country.xlsx")
+
+# Normalize both long and short country names for matching
+country['norm_long'] = country['longName_EN'].apply(normalize)
+country['norm_short'] = country['shortName_EN'].apply(normalize)
+
+# Create a list of all normalized country names (long + short)
+all_names = pd.concat([country['norm_long'], country['norm_short']]).dropna().unique()
+
+# Function to match a country name from the ILO dataset to an ISO3 code
+def match_iso3(area):
+    norm_area = normalize(area)
+    # Manual override for Czechia
+    if norm_area == "czechia":
+        return "CZE"
+    # Fuzzy match against normalized country names
+    match, score = process.extractOne(norm_area, all_names)
+    # If the match score is high enough, return the corresponding ISO3 code
+    if score >= 90:
+        row = country[(country['norm_long'] == match) | (country['norm_short'] == match)]
+        if not row.empty:
+            return row['ISO3Code'].values[0]
+    # Return None if no good match is found
+    return None
+
+# Apply the matching function to the 'Area' column to assign ISO3 codes
+id24['ISO3Code'] = id24['Area'].apply(match_iso3)
+
+# Save the result to a new Excel file
+id24.to_excel("id=24_with_fuzzy_ISO3.xlsx", index=False)
+```
+
+---
+
+## ✅ Output
+
+The resulting file will include an additional column:
+
+* `ISO3Code` – mapped ISO3 country code based on fuzzy matching and manual overrides.
+
+This enables consistent country-level analysis and integration with Navicat-based datasets and dashboards.
+
+---
+
+## ⚠️ Notes & Limitations
+
+* Countries not found in the Navicat reference table are excluded.
+* Fuzzy matching accuracy depends on normalization rules and threshold value.
+* This logic is designed specifically for single-country unemployment indicators and may not generalize to multi-entity datasets.
+
+---
+
+## 👩‍💻 Author
+
+**Minsol Cho**
+IFPRI MTI Unit
+Data Integration & Dashboard Development
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 # ISO3_Mapping_ILOSTAT  
 ### Mapping ISO3 Codes to ILO Unemployment Data (19th ICLS Definition)
 
