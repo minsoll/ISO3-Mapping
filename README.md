@@ -2,7 +2,7 @@
 
 ### Mapping ISO3 Codes to ILO Unemployment Data (19th ICLS Definition)
 
-This repository contains a Python-based manual processing pipeline for mapping ISO3 country codes to ILOSTAT’s **“Unemployment rates by reference area – Current ILO definition (19th ICLS)”** dataset.
+This repository contains a Python-based manual processing pipeline for mapping ISO3 country codes to ILOSTAT’s “Unemployment rates by reference area - Current ILO definition (19th ICLS)”dataset.
 
 Since the original ILOSTAT data does not include ISO3 codes, ISO3 identifiers were assigned by referencing the country table exported from Navicat, enabling standardized country-level analysis.
 
@@ -144,7 +144,7 @@ This enables consistent country-level analysis and integration with Navicat-base
 
 ---
 
-## ⚠️ Notes & Limitations
+##  Notes & Limitations
 
 * Countries not found in the Navicat reference table are excluded.
 * Fuzzy matching accuracy depends on normalization rules and threshold value.
@@ -152,7 +152,7 @@ This enables consistent country-level analysis and integration with Navicat-base
 
 ---
 
-## 👩 Author
+##  Author
 
 **Minsol Cho**
 IFPRI MTI Unit
@@ -163,6 +163,10 @@ Data Integration & Dashboard Development
 
 # ISO3_Mapping_ILOSTAT  
 ### Mapping ISO3 Codes to ILO Unemployment Data (19th ICLS Definition)
+
+
+-----------------
+#korean
 
 이 저장소는 ILOSTAT의 **“Unemployment rates by reference area – Current ILO definition (19th ICLS)”** 데이터에 ISO3 국가코드를 매핑하기 위한 Python 기반 매뉴얼 처리 로직을 포함합니다.  
 ILOSTAT 데이터에는 ISO3 코드가 기본적으로 제공되지 않기 때문에, 표준화된 국가 단위 분석을 위해 Navicat에서 내려받은 국가 테이블을 참조하여 ISO3 코드를 할당했습니다.

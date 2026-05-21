@@ -13,14 +13,14 @@ def normalize(text):
 # Load the ILO unemployment dataset (19th ICLS definition)
 id24 = pd.read_excel("id=24.xlsx")
 
-# Load the country reference table (from Navicat)
+# Load the country reference table (from navicat)
 country = pd.read_excel("country.xlsx")
 
 # Normalize both long and short country names for matching
 country['norm_long'] = country['longName_EN'].apply(normalize)
 country['norm_short'] = country['shortName_EN'].apply(normalize)
 
-# Create a list of all normalized country names (long + short)
+# Create a list of all normalized country names (long+short)
 all_names = pd.concat([country['norm_long'], country['norm_short']]).dropna().unique()
 
 # Function to match a country name from the ILO dataset to an ISO3 code
