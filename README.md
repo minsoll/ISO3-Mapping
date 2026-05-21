@@ -8,7 +8,7 @@ Since the original ILOSTAT data does not include ISO3 codes, ISO3 identifiers we
 
 ---
 
-## 📌 1. Background
+##  1. Background
 
 The unemployment data based on the 19th ICLS definition from ILOSTAT only provides country names in the `Area` column and does not include ISO3 country codes.
 To resolve this limitation, ISO3 codes were mapped through the following process:
@@ -20,7 +20,7 @@ To resolve this limitation, ISO3 codes were mapped through the following process
 
 ---
 
-## 📁 2. Data Sources
+##  2. Data Sources
 
 ### **① Unemployment Data (id=24.xlsx)**
 
@@ -38,9 +38,9 @@ To resolve this limitation, ISO3 codes were mapped through the following process
 
 ---
 
-## ⚙️ 3. Matching Logic
+##  3. Matching Logic
 
-### 🔹 1) Normalization
+### 1) Normalization
 
 All country names are normalized using the following rules:
 
@@ -53,7 +53,7 @@ This preprocessing step improves the accuracy of fuzzy matching.
 
 ---
 
-### 🔹 2) Fuzzy Matching
+###  2) Fuzzy Matching
 
 * The `Area` values are normalized and compared against both `longName_EN` and `shortName_EN`.
 * Matching is performed using `fuzzywuzzy.process.extractOne()`.
@@ -81,7 +81,7 @@ Examples:
 
 ---
 
-## 🧪 4. Python Code
+##  4. Python Code
 
 ```python
 import pandas as pd
@@ -134,7 +134,7 @@ id24.to_excel("id=24_with_fuzzy_ISO3.xlsx", index=False)
 
 ---
 
-## ✅ Output
+##  Output
 
 The resulting file will include an additional column:
 
@@ -152,7 +152,7 @@ This enables consistent country-level analysis and integration with Navicat-base
 
 ---
 
-## 👩‍💻 Author
+## 👩 Author
 
 **Minsol Cho**
 IFPRI MTI Unit
